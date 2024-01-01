@@ -17,31 +17,36 @@ module track(
     gauge_size = 8,
     length=16
 ){
+    ties(gauge_size, length);
+    
+    rail(0.5,1,1/3,length - 1);
+    rail(0.5,gauge_size - 2,1/3,length - 1);
+    
+}
+
+module ties(
+    gauge_size = 8,
+    length=16
+){
+    // first tie
     place(0,0) tie(
         size=1,
         gauge=gauge_size
     );
     
-    place(3,0) tie(
-        gauge=gauge_size
-    );
+    // intermediate ties
+    for(ii = [3:4:length-3]) {
     
-    place(7,0) tie(
-        gauge=gauge_size
-    );
+        place(ii,0) tie(
+            gauge=gauge_size
+        );
+    }
     
-    place(11,0) tie(
-        gauge=gauge_size
-    );
-    
-    place(15,0) tie(
+    // last tie
+    place(length - 1,0) tie(
         size=1,
         gauge=gauge_size
     );
-    
-    rail(0.5,1,1/3,length - 1);
-    rail(0.5,gauge_size - 2,1/3,length - 1);
-    
 }
 
 // a tie has a gap in studs where the rail goes
