@@ -6,6 +6,8 @@ track_length = 16;
 gauge = "standard"; // [standard:Standard, narrow:Narrow]
 
 
+trapezoid_points= [[0, -0.1],[2, 1.6],[6, 1.6], [8, -0.1]];
+
 color([108/255, 110/255, 104/255]) track(
     length=track_length,
     gauge_size = (gauge == "standard") ? 8 : (gauge == "narrow") ? 6 : 0
@@ -24,14 +26,14 @@ module track(
     
 }
 
+// Place end ties and a middle tie with a two stud gap
 module ties(
     gauge_size = 8,
     length=16
 ){
     // first tie
-    place(0,0) tie(
-        size=1,
-        gauge=gauge_size
+    place(0,0) end_tie(
+        gauge_size
     );
     
     // intermediate ties
@@ -42,11 +44,41 @@ module ties(
         );
     }
     
-    // last tie
-    place(length - 1,0) tie(
-        size=1,
-        gauge=gauge_size
-    );
+    // last tie, flipped
+    place(length - 1,0) place(0.5, gauge_size / 2) rotate(180) place(-0.5, -gauge_size / 2) end_tie(gauge_size);
+}
+
+module end_tie(
+    gauge_size=8,
+){
+    difference(){
+        union(){
+            difference(){
+                tie(
+                    size=1,
+                    gauge=gauge_size
+                );
+                
+                // missing trapezoid
+                place(0, gauge_size / 2 - 12 / 8,-0.1) linear_extrude(10) polygon(trapezoid_points);
+            }
+            
+            // missing trapezoid wall
+            difference(){
+                place(0.1, gauge_size / 2 - 12 / 8) linear_extrude(1/3*9.6) scale([1.05,1.05,1]) polygon(trapezoid_points);
+                place(0, gauge_size / 2 - 12 / 8,-0.1) linear_extrude(10) polygon(trapezoid_points);
+            }
+            
+            // circle tab
+            place(0, gauge_size / 2 - 1) cylinder(1/3*9.6, 2, 2, $fn=16 );
+            
+            // extruding trapezoid
+            place(0, gauge_size / 2 + 12/8, 0) rotate(180) linear_extrude(1/3 * 9.6) polygon(trapezoid_points);
+        }
+        // missing circle
+        place(0, gauge_size / 2 + 1, -0.1) cylinder(5, 2, 2, $fn=16 );
+    }
+    
 }
 
 // a tie has a gap in studs where the rail goes
