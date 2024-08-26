@@ -1,161 +1,44 @@
 /**
- * Derived from http://www.thingiverse.com/thing:5699
+ * narrow-ballast.scad
+ * Copyright (c) Dorian Westacott, 2024
+ * 
+ * MIT License
  *
- * LEGO, the LEGO logo, the Brick, DUPLO, and MINDSTORMS are trademarks of the LEGO Group. 2012 The LEGO Group.
+ * LEGO, the LEGO logo, the Brick, and DUPLO are trademarks of the LEGO Group. This is an independent project not sponsored, endorsed, nor associated with the LEGO Group.   
  */
-
-/* [General] */
-
-// Width of the block, in studs
-block_width = 2;
-
-// Length of the block, in studs
-block_length = 6;
-
-// Height of the block. A ratio of "1" is a standard LEGO brick height; a ratio of "1/3" is a standard LEGO plate height; "1/2" is a standard DUPLO plate.
-block_height_ratio = 1; // [.33333333333:1/3, .5:1/2, 1:1, 1.5:1 1/2, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9, 10:10]
-
-// What type of block should this be? For type-specific options, see the "Wings," "Slopes," "Curves", and "Baseplates" tabs.
-block_type = "brick"; // [brick:Brick, tile:Tile, wing:Wing, slope:Slope, curve:Curve, baseplate:Baseplate, round:Round]
-
-// What brand of block should this be? LEGO for regular LEGO bricks, Duplo for the toddler-focused larger bricks.
-block_brand = "lego"; // [lego:LEGO, duplo:DUPLO]
-
-// What stud type do you want? Hollow studs allow rods to be pushed into the stud.
-stud_type = "solid"; // [solid:Solid, hollow:Hollow]
-
-// What type of block bottom do you want? Open blocks are the standard, closed bottom blocks can be used for stacking composite shapes.
-block_bottom_type = "open"; // [closed:Closed, open:Open]
-
-// Should the block wall include splines? Valid only for a open block bottom type.
-include_wall_splines = "yes"; // [no:No, yes:Yes]
-
-// Should the block include round horizontal holes like the Technics LEGO bricks have?
-technic_holes = "no"; // [no:No, yes:Yes]
-
-// Should the block include vertical cross-shaped axle holes?
-vertical_axle_holes = "no"; // [no:No, yes:Yes]
-
-/* [Wings] */
-
-// What type of wing? Full is suitable for the front of a plane, left/right are for the left/right of a plane.
-wing_type = "full"; // [full:Full, left:Left, right:Right]
-
-// The number of studs across the end of the wing. If block_width is odd, this needs to be odd, and the same for even.
-wing_end_width = 2;
-
-// The length of the rectangular portion of the wing, in studs.
-wing_base_length = 3;
-
-// Should the wing edges be notched to accept studs below?
-wing_stud_notches = "yes"; // [yes:Yes, no:No]
-
-/* [Slopes] */
-
-// How many rows of studs should be left before the slope?
-slope_stud_rows = 1;
-
-// How much vertical height should be left at the end of the slope? e.g, a value of zero means the slope reaches the bottom of the block. A value of 1 means that for a block with height 2, the slope reaches halfway down the block.
-slope_end_height = 0;
-
-/* [Curves] */
-
-// How many rows of studs should be left before the curve?
-curve_stud_rows = 5;
-
-// Should the curve be convex or concave?
-curve_type = "concave"; // [concave:Concave, convex:Convex]
-
-// How much vertical height should be left at the end of the curve? e.g, a value of zero means the curve reaches the bottom of the block. A value of 1 means that for a block with height 2, the curve reaches halfway down the block.
-curve_end_height = 0;
-
-/* [Baseplates] */
-
-// If you want a roadway, how wide should it be (in studs)? A roadway is a smooth (non-studded) section of a baseplate.
-roadway_width = 0;
-
-// How long should the roadway be?
-roadway_length = 0;
-
-// Where should the roadway start (x-value)? A value of zero puts the roadway at the far left side of the plate.
-roadway_x = 0;
-
-// Where should the roadway start (y-value)? A value of zero puts the roadway at the front of the plate.
-roadway_y = 0;
-
-// Should the road be inverted? Useful for minifigure display with one row of studs on the middle.
-roadway_invert = false; // [false:False, true:True]
-
-/* [Round] */
-
-// How many studs should be rounded at the corners?
-round_radius = 3;
-
-// Should the rounded edges be notched to accept studs below?
-round_stud_notches = "yes";
-
-/* [SNOT] */
-
-// SNOT means Studs Not On Top -- bricks with alternative stud configurations.
-// Put studs on the top and bottom?
-dual_sided = "no"; // [no:No, yes:Yes]
-
-// Instead of both sides having studs, both sides can have no studs.
-dual_bottom = "no"; // [no:No, yes:Yes]
-
-// Draw the posts (anti-studs) on the block?
-posts = "yes"; // [no:No, yes:Yes]
-
-/* [Printer-Specific] */
-
-// Should extra reinforcement be included to make printing on an FDM printer easier? Ignored for tiles, since they're printed upside-down and don't need the reinforcement. Recommended for block heights less than 1 or for Duplo bricks. 
-use_reinforcement = "no"; // [no:No, yes:Yes]
-
-// If your printer prints the blocks correctly except for the stud diameter, use this variable to resize just the studs for your printer. A value of 1.05 will print the studs 105% wider than standard.
-stud_rescale = 1.00;
+ 
+ 
+// If your printer prints the track ballast correctly except for the stud diameter, use this variable to resize just the studs for your printer. A value of 1.05 will print the studs 105% bigger than standard.
+stud_rescale = 1.025;
 //stud_rescale = 1.03 * 1;  // Creality Ender 3 Pro, PLA
 //stud_rescale = 1.0475 * 1; // Orion Delta, T-Glase
 //stud_rescale = 1.022 * 1; // Orion Delta, ABS
 
-// If you want stud tops to be curved, specify a value between 0 and 1, where 0 is no roundness and 1 is very round
-stud_top_roundness = 0; // [0:0.01:1]
-
-// Print tiles upside down.
-translate([0, 0, (block_type == "tile" ? block_height_ratio * block_height : 0)]) rotate([0, (block_type == "tile" ? 180 : 0), 0]) {
-    block(
-        width=block_width,
-        length=block_length,
-        height=block_height_ratio,
-        type=block_type,
-        brand=block_brand,
-        stud_type=stud_type,
-        block_bottom_type=block_bottom_type,
-        include_wall_splines=(include_wall_splines=="yes"),
-        horizontal_holes=(technic_holes=="yes"),
-        vertical_axle_holes=(vertical_axle_holes=="yes"),
-        reinforcement=(use_reinforcement=="yes"),
-        wing_type=wing_type,
-        wing_end_width=wing_end_width,
-        wing_base_length=wing_base_length,
-        stud_notches=(wing_stud_notches=="yes" || round_stud_notches=="yes"),
-        slope_stud_rows=slope_stud_rows,
-        slope_end_height=slope_end_height,
-        curve_stud_rows=curve_stud_rows,
-        curve_type=curve_type,
-        curve_end_height=curve_end_height,
-        roadway_width=roadway_width,
-        roadway_length=roadway_length,
-        roadway_x=roadway_x,
-        roadway_y=roadway_y,
-        roadway_invert=roadway_invert,
-        round_radius=round_radius,
-        stud_rescale=stud_rescale,
-        stud_top_roundness=stud_top_roundness,
-        dual_sided=(dual_sided=="yes"),
-        dual_bottom=(dual_bottom=="yes"),
-        draw_posts=(posts=="yes")
-    );
+color([108/255, 110/255, 104/255]) {
+    stack(0,0,0) {
+        place(0,0,0) uncenter(1,8) block(width=1, length=8, height=1/3, draw_posts=false, include_wall_splines=false, stud_rescale=stud_rescale);
+        place(7,0,0) uncenter(1,8) block(width=1, length=8, height=1/3, draw_posts=false, include_wall_splines=false, stud_rescale=stud_rescale);
+        place(0,3,0) rotate([0, 0, 90]) uncenter(2,8)  block(width=2, length=8, height=1/3, type="tile", draw_posts=false, include_wall_splines=false);
+        place(0,7,0) rotate([0, 0, 90]) uncenter(2,8)  block(width=2, length=8, height=1/3, type="tile", draw_posts=false, include_wall_splines=false);
+        place(1,1,1/3) uncenter(1,2) block(width=1,length=2,height=1/3, block_bottom_type="closed", stud_rescale=stud_rescale);
+        place(1,5,1/3) uncenter(1,2) block(width=1,length=2,height=1/3, block_bottom_type="closed", stud_rescale=stud_rescale);
+        place(6,1,1/3) uncenter(1,2) block(width=1,length=2,height=1/3, block_bottom_type="closed", stud_rescale=stud_rescale);
+        place(6,5,1/3) uncenter(1,2) block(width=1,length=2,height=1/3, block_bottom_type="closed", stud_rescale=stud_rescale);
+        place(3,1,1/3) uncenter(2,2) block(width=2,length=2,height=1/3, block_bottom_type="closed", stud_rescale=stud_rescale);
+        place(3,5,1/3) uncenter(2,2) block(width=2,length=2,height=1/3, block_bottom_type="closed", stud_rescale=stud_rescale);
+    }
 }
+
+
+
+/**
+ * LEGO.scad 
+ * https://github.com/cfinke/LEGO.scad
+ * Copyright (c) Christopher Finke 2024
+ * 
+ * Modified and included under MIT License
+ */
+
 
 module block(
     width=1,
@@ -974,3 +857,17 @@ function minimum_block_count(
     stud_spacing=8,
     wall_play=0.1
     ) = ceil((length/stud_spacing)-wall_play);
+
+
+/* MIT License
+
+Copyright (c) 2024 Dorian Westacott
+Copyright (c) 2015 Christopher Finke
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
